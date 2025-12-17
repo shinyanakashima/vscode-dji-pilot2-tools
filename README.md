@@ -1,51 +1,52 @@
 # vscode-dji-pilot2-tools
 
-VSCode extension providing developer tools for DJI Pilot 2 mission files.
+DJI Pilot 2 ミッションファイルの開発支援ツール VSCode 拡張機能です。
 
-## Features
+## 機能
 
-### KMZ Viewer
-View DJI Pilot 2 mission files (.kmz) directly in VSCode with an interactive map.
+### KMZ ビューア
 
-- Displays waypoints on an OpenStreetMap base layer (via Leaflet.js)
-- Shows flight path as a polyline
-- Lists all waypoints with coordinates and altitude in a table
-- Highlights start/end waypoints with distinct colors
-- Supports DJI Pilot 2 KMZ format (`template.kml` + `waylines.wpml`)
+DJI Pilot 2 のミッションファイル（.kmz）を VSCode 上でインタラクティブマップ表示します。
 
-**Usage:**
-- Right-click a `.kmz` file in the Explorer and select **"DJI Pilot 2: Open KMZ Viewer"**
-- Or run the command from the Command Palette (`Ctrl+Shift+P`)
+- ウェイポイントを OpenStreetMap 上にプロット（Leaflet.js 使用）
+- フライトパスをポリラインで描画
+- 全ウェイポイントの座標・高度をテーブル表示
+- 離陸地点・着陸地点を色分けで強調表示
+- DJI Pilot 2 KMZ フォーマット（`template.kml` + `waylines.wpml`）に対応
 
-## Supported Formats
+**使い方:**
+- エクスプローラーで `.kmz` ファイルを右クリック → **「DJI Pilot 2: Open KMZ Viewer」**
+- またはコマンドパレット（`Ctrl+Shift+P`）から実行
 
-| Format | Status |
+## 対応フォーマット
+
+| フォーマット | 状態 |
 |---|---|
-| `.kmz` (DJI Pilot 2) | Supported |
-| `template.kml` | Supported (waypoint extraction) |
-| `waylines.wpml` | Planned |
+| `.kmz`（DJI Pilot 2） | 対応済み |
+| `template.kml` | 対応済み（ウェイポイント座標抽出） |
+| `waylines.wpml` | 実装予定 |
 
-## Related Projects
+## 姉妹プロジェクト
 
-| Repository | Description |
+| リポジトリ | 説明 |
 |---|---|
-| [streamlit-DJI-pilot2-waypoints](https://github.com/shinysb/streamlit-DJI-pilot2-waypoints) | Streamlit web app (GeoJSON to KMZ conversion) |
-| [qgis-DJI-pilot2-waypoints](https://github.com/shinysb/qgis-DJI-pilot2-waypoints) | QGIS plugin version |
+| [streamlit-DJI-pilot2-waypoints](https://github.com/shinyanakashima/streamlit-DJI-pilot2-waypoints) | Streamlit Web アプリ（GeoJSON → KMZ 変換） |
+| [qgis-DJI-pilot2-waypoints](https://github.com/shinyanakashima/qgis-DJI-pilot2-waypoints) | QGIS プラグイン版 |
 
-## Development
+## 開発
 
-### Prerequisites
+### 前提環境
 - Node.js 20+
 - VSCode 1.85+
 
-### Setup
+### セットアップ
 ```bash
 npm install
 npm run compile
 ```
 
-Press `F5` in VSCode to launch the Extension Development Host.
+VSCode で `F5` を押すと Extension Development Host が起動します。
 
-## License
+## ライセンス
 
 MIT
