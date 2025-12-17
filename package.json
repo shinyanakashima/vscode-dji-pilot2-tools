@@ -1,0 +1,57 @@
+{
+  "name": "vscode-dji-pilot2-tools",
+  "displayName": "DJI Pilot 2 Tools",
+  "description": "Developer tools for DJI Pilot 2 mission files (KMZ/WPML viewer and utilities)",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "DJI",
+    "Pilot 2",
+    "KMZ",
+    "WPML",
+    "waypoint",
+    "drone",
+    "UAV",
+    "geospatial"
+  ],
+  "activationEvents": [
+    "onCommand:dji-pilot2-tools.openKmzViewer"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "dji-pilot2-tools.openKmzViewer",
+        "title": "DJI Pilot 2: Open KMZ Viewer"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "dji-pilot2-tools.openKmzViewer",
+          "when": "resourceExtname == .kmz",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1"
+  }
+}
