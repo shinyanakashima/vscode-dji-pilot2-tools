@@ -1,5 +1,6 @@
 {
   "name": "vscode-dji-pilot2-tools",
+  "packageManager": "pnpm@10.11.0",
   "displayName": "DJI Pilot 2 Tools",
   "description": "Developer tools for DJI Pilot 2 mission files (KMZ/WPML viewer and utilities)",
   "version": "0.1.0",
@@ -24,6 +25,16 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "customEditors": [
+      {
+        "viewType": "dji-pilot2-tools.kmzViewer",
+        "displayName": "DJI KMZ Viewer",
+        "selector": [
+          { "filenamePattern": "*.kmz" }
+        ],
+        "priority": "default"
+      }
+    ],
     "commands": [
       {
         "command": "dji-pilot2-tools.openKmzViewer",
