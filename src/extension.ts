@@ -57,8 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.window.registerCustomEditorProvider(
       'dji-pilot2-tools.kmzViewer',
-      new KmzEditorProvider(),
-      { webviewOptions: { enableScripts: true } }
+      new KmzEditorProvider()
     )
   );
 
@@ -152,14 +151,14 @@ function buildWebviewHtml(waypoints: Waypoint[], filename: string, hasWpml: bool
     #header { padding: 8px 12px; background: #252526; border-bottom: 1px solid #3c3c3c; display: flex; align-items: center; gap: 12px; }
     #header h1 { font-size: 13px; font-weight: 600; color: #e8e8e8; }
     #header .meta { font-size: 12px; color: #888; }
-    #map-wrap { position: relative; height: calc(100vh - 80px); }
+    #map-wrap { position: relative; height: calc(100vh - 300px); }
     #map { width: 100%; height: 100%; }
     #basemap-switcher { position: absolute; top: 8px; right: 8px; z-index: 10; display: flex; flex-direction: column; gap: 4px; }
     #basemap-switcher button { padding: 4px 10px; font-size: 11px; background: #252526cc; color: #ccc; border: 1px solid #555; border-radius: 3px; cursor: pointer; }
     #basemap-switcher button.active { background: #0061a4; color: #fff; border-color: #0061a4; }
     #basemap-switcher button:hover:not(.active) { background: #2d2d2d; }
     #basemap-switcher .separator { height: 1px; background: #555; margin: 2px 0; }
-    #table-container { height: 80px; overflow-y: auto; background: #252526; border-top: 1px solid #3c3c3c; }
+    #table-container { height: 300px; overflow-y: auto; background: #252526; border-top: 1px solid #3c3c3c; }
     table { width: 100%; border-collapse: collapse; font-size: 11px; }
     th { background: #2d2d2d; color: #bbb; padding: 4px 8px; text-align: left; position: sticky; top: 0; }
     td { padding: 3px 8px; border-bottom: 1px solid #2d2d2d; color: #ccc; }
@@ -167,8 +166,7 @@ function buildWebviewHtml(waypoints: Waypoint[], filename: string, hasWpml: bool
     .badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; margin-left: 8px; }
     .badge-kmz { background: #0e7a0d; color: #fff; }
     .badge-wpml { background: #0061a4; color: #fff; }
-    .maplibregl-popup-content { background: #252526; color: #ccc; font-size: 12px; border-radius: 4px; }
-    .maplibregl-popup-tip { border-top-color: #252526 !important; border-bottom-color: #252526 !important; }
+    tr.highlight td { background: #1a3a5c; color: #fff; }
   </style>
 </head>
 <body>
@@ -222,7 +220,16 @@ function buildWebviewHtml(waypoints: Waypoint[], filename: string, hasWpml: bool
     let currentBasemap = 'seamless';
     let is3D = true;
     let deckOverlay = null;
-    let currentPopup = null;
+
+    function highlightRow(wpIndex) {
+      document.querySelectorAll('#tbody tr').forEach(tr => tr.classList.remove('highlight'));
+      if (wpIndex == null) { return; }
+      const row = document.querySelector(\`#tbody tr[data-index="\${wpIndex}"]\`);
+      if (row) {
+        row.classList.add('highlight');
+        row.scrollIntoView({ block: 'nearest' });
+      }
+    }
 
     function getWpColor(i) {
       if (i === 0) return [0, 204, 68];
@@ -276,12 +283,7 @@ function buildWebviewHtml(waypoints: Waypoint[], filename: string, hasWpml: bool
           radiusMinPixels: 4,
           pickable: true,
           onClick: ({ object }) => {
-            if (!object) { return; }
-            if (currentPopup) { currentPopup.remove(); }
-            currentPopup = new maplibregl.Popup({ closeButton: true })
-              .setLngLat([object.lon, object.lat])
-              .setHTML(\`<b>WP \${object.index}</b><br>Lat: \${object.lat.toFixed(7)}<br>Lon: \${object.lon.toFixed(7)}<br>Alt: \${object.alt.toFixed(1)} m\`)
-              .addTo(map);
+            highlightRow(object ? object.index : null);
           },
           onHover: ({ object }) => { map.getCanvas().style.cursor = object ? 'pointer' : ''; }
         }),
@@ -315,7 +317,7 @@ function buildWebviewHtml(waypoints: Waypoint[], filename: string, hasWpml: bool
           id: 'labels',
           data: waypoints,
           getPosition: w => [w.lon, w.lat, getZ(w) + (is3D ? 8 : 2)],
-          getText: w => String(w.index),
+          getText: (w, { index }) => index === 0 ? 'Start' : index === waypoints.length - 1 ? \`End(\${w.index})\` : String(w.index),
           getSize: 13,
           getColor: [255, 255, 255],
           getTextAnchor: 'middle',
@@ -363,6 +365,7 @@ function buildWebviewHtml(waypoints: Waypoint[], filename: string, hasWpml: bool
     const tbody = document.getElementById('tbody');
     waypoints.forEach(w => {
       const tr = document.createElement('tr');
+      tr.dataset.index = w.index;
       tr.innerHTML = \`<td>\${w.index}</td><td>\${w.lat.toFixed(7)}</td><td>\${w.lon.toFixed(7)}</td><td>\${w.alt.toFixed(1)}</td>\`;
       tbody.appendChild(tr);
     });
