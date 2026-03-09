@@ -5,26 +5,36 @@
   "description": "Developer tools for DJI Pilot 2 mission files (KMZ/WPML viewer and utilities)",
   "publisher": "shinyanakashima",
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
+    "Visualization",
     "Other"
   ],
   "keywords": [
-    "DJI Pilot2",
-    "KMZ",
-    "WPML",
-    "waypoint",
+    "DJI",
     "drone",
-    "UAV",
-    "geospatial"
+    "mission",
+    "KMZ",
+    "KML",
+    "waypoints",
+    "GIS",
+    "mapping"
   ],
+  "icon": "logo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/shinyanakashima/vscode-dji-pilot2-tools.git"
   },
+  "files": [
+    "out/**",
+    "media/**",
+    "README.md",
+    "LICENSE",
+    "logo.png"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "customEditors": [
@@ -57,8 +67,8 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./ && node build-webview.mjs",
-    "compile:ext": "tsc -p ./",
+    "compile": "npm run compile:ext && npm run compile:webview",
+    "compile:ext": "tsc -p ./ --noEmit && node build-extension.mjs",
     "compile:webview": "node build-webview.mjs",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts"

@@ -1,63 +1,91 @@
-# vscode-dji-pilot2-tools
+# DJI Pilot 2 Tools for VS Code
 
-DJI Pilot 2 ミッションファイルの開発支援ツール VSCode 拡張機能です。
+![Version](https://img.shields.io/visual-studio-marketplace/v/shinyanakashima.vscode-dji-pilot2-tools)
+![Installs](https://img.shields.io/visual-studio-marketplace/i/shinyanakashima.vscode-dji-pilot2-tools)
+![License](https://img.shields.io/github/license/shinyanakashima/vscode-dji-pilot2-tools)
 
-## スクリーンショット
+Visualize and inspect **DJI Pilot 2 KMZ mission files** directly in Visual Studio Code.
+Interactive 3D mission viewer powered by **MapLibre GL JS** and **deck.gl**.
 
-![KMZ Viewer](capture.png)
+DJI Pilot 2 の **KMZ ミッションファイルを VSCode 上で可視化・解析する開発支援ツール**です。
+MapLibre GL JS と deck.gl を使用した **インタラクティブ 3D ミッションビューア**を提供します。
 
-## 機能
+![KMZ Viewer](https://raw.githubusercontent.com/shinyanakashima/vscode-dji-pilot2-tools/main/capture.png)
 
-### KMZ ビューア
+---
 
-DJI Pilot 2 のミッションファイル（.kmz）を VSCode 上でインタラクティブ 3D マップ表示します。
+# ✈️ Features
 
-- `.kmz` ファイルをダブルクリックするだけで自動表示（カスタムエディタ統合）
-- **MapLibre GL JS** + **deck.gl** による 3D ウェイポイント表示
-  - ウェイポイントを実際の高度（MSL）で 3D 空間にプロット
-  - 地面との垂直ドロップライン表示
-  - 飛行経路を 3D ラインで描画、進行方向の矢印付き
-  - Start / End ラベル、ウェイポイント番号表示
-- ベースマップ切替（地理院 航空写真 / 地理院 標準地図 / OpenStreetMap）
-- 3D 表示 ON/OFF 切替
-- ウェイポイントクリックで属性テーブルの対応行をハイライト
-- 全ウェイポイントの座標・高度をテーブル表示
-- `waylines.wpml` 同梱ファイルを WPML バッジで表示
-- DJI Pilot 2 KMZ フォーマット（`template.kml` + `waylines.wpml`）に対応
+## KMZ Mission Viewer
 
-**使い方:**
-- エクスプローラーで `.kmz` ファイルを**ダブルクリック**
-- または右クリック → **「DJI Pilot 2: Open KMZ Viewer」**
+Visualize DJI Pilot 2 `.kmz` mission files as an interactive **3D map inside VS Code**.
 
-## 対応フォーマット
+DJI Pilot 2 の `.kmz` ミッションファイルを **VSCode 内で 3D マップ表示**できます。
 
-| フォーマット | 状態 |
-|---|---|
-| `.kmz`（DJI Pilot 2） | 対応済み |
-| `template.kml` | 対応済み（ウェイポイント座標抽出） |
-| `waylines.wpml` | 実装予定 |
+### Capabilities
 
-## 姉妹プロジェクト
+* Open `.kmz` files directly with **Custom Editor integration**
+* 3D waypoint visualization using **MapLibre GL JS + deck.gl**
+* Waypoints plotted in **actual altitude (MSL)**
+* **Vertical drop lines** to ground
+* **3D flight path rendering** with direction arrows
+* **Start / End labels** and waypoint numbers
+* Base map switching
 
-| リポジトリ | 説明 |
-|---|---|
-| [streamlit-DJI-pilot2-waypoints](https://github.com/shinyanakashima/streamlit-DJI-pilot2-waypoints) | Streamlit Web アプリ（GeoJSON → KMZ 変換） |
-| [qgis-DJI-pilot2-waypoints](https://github.com/shinyanakashima/qgis-DJI-pilot2-waypoints) | QGIS プラグイン版 |
+  * GSI Aerial Photo
+  * GSI Standard Map
+  * OpenStreetMap
+* Toggle **3D visualization ON / OFF**
+* Click waypoint → highlight corresponding row in attribute table
+* View **all waypoint coordinates and altitude**
+* Detect bundled `waylines.wpml` file with **WPML badge**
+* Supports DJI Pilot 2 KMZ structure
+  (`template.kml + waylines.wpml`)
 
-## 開発
+---
 
-### 前提環境
-- Node.js 20+
-- VSCode 1.85+
+# 🚀 Usage
 
-### セットアップ
+### Open KMZ Viewer
+
+1. Double-click a `.kmz` file in the VS Code Explorer
+2. Or right-click → **DJI Pilot 2: Open KMZ Viewer**
+
+VSCode 内のエクスプローラーで `.kmz` を開くだけで
+3D ミッションビューアが起動します。
+
+---
+
+# 📦 Supported Formats
+
+| Format               | Status                        |
+| -------------------- | ----------------------------- |
+| `.kmz` (DJI Pilot 2) | Supported                     |
+| `template.kml`       | Waypoint extraction supported |
+| `waylines.wpml`      | Planned                       |
+
+---
+
+# 🛠 Development
+
+### Requirements
+
+* Node.js 20+
+* VS Code 1.85+
+
+### Setup
+
 ```bash
 npm install
 npm run compile
 ```
 
-VSCode で `F5` を押すと Extension Development Host が起動します。
+Launch Extension Development Host:
 
-## ライセンス
+Press **F5** in VS Code.
+
+---
+
+# 📄 License
 
 MIT
