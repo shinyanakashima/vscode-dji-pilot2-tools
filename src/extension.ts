@@ -1,9 +1,24 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-// JSZip is loaded dynamically to avoid bundling issues in extension host
+// extension host でのバンドル問題を避けるため、JSZip は動的に読み込む
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const JSZip = require('jszip');
+
+const VIEWER_HTML_TEMPLATE_PATH = path.join(__dirname, '..', 'media', 'viewer.html');
+let viewerHtmlTemplateCache: string | null = null;
+
+function getViewerHtmlTemplate(): string {
+  if (viewerHtmlTemplateCache === null) {
+    viewerHtmlTemplateCache = fs.readFileSync(VIEWER_HTML_TEMPLATE_PATH, 'utf-8');
+  }
+  return viewerHtmlTemplateCache;
+}
+
+function toSafeInlineJson(value: unknown): string {
+  // インライン script 文脈で </script> が誤って閉じられるのを防ぐ
+  return JSON.stringify(value).replace(/</g, '\\u003c');
+}
 
 async function loadKmzToWebview(filePath: string, webview: vscode.Webview, extensionUri: vscode.Uri): Promise<void> {
   let kmlContent: string | null = null;
@@ -58,7 +73,7 @@ class KmzEditorProvider implements vscode.CustomReadonlyEditorProvider {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  // Register as default editor for .kmz files (double-click to open)
+  // .kmz ファイルの既定エディタとして登録（ダブルクリックで開く）
   context.subscriptions.push(
     vscode.window.registerCustomEditorProvider(
       'dji-pilot2-tools.kmzViewer',
@@ -66,7 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
-  // Keep right-click command as fallback
+  // 右クリックメニューから開く場合のコマンドも登録
   context.subscriptions.push(
     vscode.commands.registerCommand(
       'dji-pilot2-tools.openKmzViewer',
@@ -106,9 +121,10 @@ interface Waypoint {
   alt: number;
 }
 
+// KML の内容から waypointを抽出する
 function parseKmlWaypoints(kml: string): Waypoint[] {
   const waypoints: Waypoint[] = [];
-  // Match <Placemark> blocks
+  // waypointとなる `<Placemark>` を抽出し、座標と index を取り出す
   const placemarkRegex = /<Placemark[\s\S]*?<\/Placemark>/g;
   const coordRegex = /<coordinates>\s*([\d.,-]+)\s*<\/coordinates>/;
   const indexRegex = /<wpml:index>(\d+)<\/wpml:index>/;
@@ -135,30 +151,27 @@ function parseKmlWaypoints(kml: string): Waypoint[] {
     waypoints.push({ index, lon, lat, alt });
   }
 
-  // Sort by index
+  // `<Placemark>` を見つけた順に一旦 `waypoints` に追加するが、waypoint の論理的な順序（`wpml:index`）が保証されないため、
+  // indexでsortして正しい順序に並び替える。これにより、`wpml:index` が存在しない場合でも、ファイル内の順序で waypoint を表示できる
   waypoints.sort((a, b) => a.index - b.index);
   return waypoints;
 }
 
+// KML から抽出した waypoint データを元に、Webview に表示する HTML を生成する
 function buildWebviewHtml(waypoints: Waypoint[], filename: string, hasWpml: boolean, extensionUri: vscode.Uri, webview: vscode.Webview): string {
-  const templatePath = path.join(__dirname, '..', 'media', 'viewer.html');
-  let html = fs.readFileSync(templatePath, 'utf-8');
-
-  // Create initial data for React app
+  const htmlTemplate = getViewerHtmlTemplate();
   const initialData = {
     waypoints,
     filename,
     hasWpml,
   };
-
-  // Get bundle URI
   const bundleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'out', 'webview', 'bundle.js'));
+  const replacements: Record<string, string> = {
+    '__INITIAL_DATA_JSON__': toSafeInlineJson(initialData),
+    '__BUNDLE_URI__': bundleUri.toString(),
+  };
 
-  // Replace placeholders
-  html = html.replace('__INITIAL_DATA_JSON__', JSON.stringify(initialData));
-  html = html.replace('__BUNDLE_URI__', bundleUri.toString());
-
-  return html;
+  return htmlTemplate.replace(/__INITIAL_DATA_JSON__|__BUNDLE_URI__/g, (placeholder) => replacements[placeholder] ?? placeholder);
 }
 
 export function deactivate() {}

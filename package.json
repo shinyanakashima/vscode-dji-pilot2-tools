@@ -1,8 +1,10 @@
 {
   "name": "vscode-dji-pilot2-tools",
   "packageManager": "pnpm@10.11.0",
-  "displayName": "DJI Pilot 2 Tools",
+  "displayName": "WPML Viewer for DJI Pilot2",
   "description": "Developer tools for DJI Pilot 2 mission files (KMZ/WPML viewer and utilities)",
+  "publisher": "shinyanakashima",
+  "license": "MIT",
   "version": "0.1.0",
   "engines": {
     "vscode": "^1.85.0"
@@ -11,8 +13,7 @@
     "Other"
   ],
   "keywords": [
-    "DJI",
-    "Pilot 2",
+    "DJI Pilot2",
     "KMZ",
     "WPML",
     "waypoint",
